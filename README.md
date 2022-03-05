@@ -1,24 +1,11 @@
-# README
+# 21dao
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This repository contains the backend workers/jobs that update auction and listing adata for the 21dao website. The 21dao is a not for profit dao that supports artists and art on the Solana blockchain. Decisions are made by voting/council members of the dao.
 
-Things you may want to cover:
+## Auction and listing data
 
-* Ruby version
+Auction and listing data is sourced from Exchange.Art, Formfunction and Holaplex.
 
-* System dependencies
+## Reuse
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Anyone is free to use this code according to the terms of 'The Unlicense' however please be aware that this project is still in development and breaking changes may happen.
