@@ -8,6 +8,8 @@ class ImageFromUriJob < ApplicationJob
 
   def perform
     Auction.where("image IS NULL AND source = 'holaplex'").each do |auction|
+      next unless auction.metadata_uri
+
       resp = HTTParty.get(auction.metadata_uri)
       data = resp.body
       result = JSON.parse(data)
@@ -15,5 +17,8 @@ class ImageFromUriJob < ApplicationJob
       auction.save
     end
     ImageFromUriJob.delay(run_at: 5.minutes.from_now).perform_later
+  rescue StandardError => e
+    Rails.logger.error e.message
+    Rails.logger.error e.backtrace
   end
 end
