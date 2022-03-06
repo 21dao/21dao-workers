@@ -3,7 +3,6 @@
 require 'aws-sdk-s3'
 require 'down'
 require 'httparty'
-require 'marcel'
 
 class CdnUploadJob < ApplicationJob
   queue_as :cdn_upload
@@ -23,20 +22,20 @@ class CdnUploadJob < ApplicationJob
     cdn_url = "#{ENV['S3_URL']}/#{filename}"
     return if remote_file_exists(cdn_url)
 
-    file = Down.download(uri)
-    mime = Marcel::MimeType.for file
-    return if mime == 'application/octet-stream'
+    file = begin
+      Down.download(uri)
+    rescue Down::Error
+      nil
+    end
+    return if file.nil? || file.content_type == 'application/octet-stream'
 
     client.put_object({
                         bucket: ENV['S3_BUCKET'],
                         key: filename,
                         body: file,
                         acl: "public-read",
-                        content_type: mime
+                        content_type: file.content_type
                       })
-  rescue StandardError => e
-    Rails.logger.error e.message
-    Rails.logger.error e.backtrace
   end
 
   def client
