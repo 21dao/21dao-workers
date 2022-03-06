@@ -7,6 +7,7 @@ class UpdateExchangeListingsJob < ApplicationJob
   queue_as :exchange_art
 
   def perform
+    @listings = []
     response = fetch_from_exchange(0)
     add_to_db(response['tokens'])
     remaining = response['totalCountOfResults'] - 20
@@ -17,18 +18,28 @@ class UpdateExchangeListingsJob < ApplicationJob
       remaining -= 20
       from += 20
     end
-    UpdateExchangeListingsJob.delay(run_at: 5.minutes.from_now).perform_later
+    remove_old_listings
+    UpdateExchangeListingsJob.delay(run_at: 15.minutes.from_now).perform_later
+  end
+
+  def remove_old_listings
+    listings = Listing.all.pluck(:mint)
+    (listings - @listings).each do |mint|
+      Listing.find_by_mint(mint).delete
+    end
   end
 
   def fetch_from_exchange(from)
-    artist_names = Artist.all.pluck(:name)
-    result = HTTParty.get("#{ENV['EXCHANGE_LISTINGS']}?limit=20&from=#{from}&filters={\"tokenStatus\":[\"curated\",\"certified\",\"known\"],\"brands\":#{artist_names}}")
+    url = "#{ENV['EXCHANGE_LISTINGS']}?limit=20&from=#{from}&filters={\"tokenStatus\":[\"curated\",\"certified\",\"known\"]}"
+    result = HTTParty.get(url)
     result.parsed_response
   rescue StandardError
     nil
   end
 
   def add_to_db(tokens)
+    return unless tokens
+
     tokens.each do |token|
       row = Listing.where(mint: token['mintKey']).first_or_create
       row.is_listed = token['isListed']
@@ -41,6 +52,7 @@ class UpdateExchangeListingsJob < ApplicationJob
       row.description = token['description']
       row.name = token['brand']['name']
       row.save
+      @listings << token['mintKey']
     rescue StandardError => e
       Rails.logger.error e.message
     end
