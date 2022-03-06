@@ -11,8 +11,9 @@ class CdnUploadJob < ApplicationJob
   def perform
     Auction.where(cdn_uploaded: false).each do |auction|
       next unless auction.mint && auction.image
+      next unless auction.image.start_with? 'http'
 
-      auction.update_attribute(:cdn_uploaded, true) if upload(auction.mint, auction.image)
+      upload(auction.mint, auction.image)
     end
     CdnUploadJob.delay(run_at: 5.minutes.from_now).perform_later
   end
@@ -20,11 +21,11 @@ class CdnUploadJob < ApplicationJob
   def upload(mint, uri)
     filename = mint.to_s
     cdn_url = "#{ENV['S3_URL']}/#{filename}"
-    return true if remote_file_exists(cdn_url)
+    return if remote_file_exists(cdn_url)
 
     file = Down.download(uri)
     mime = Marcel::MimeType.for file
-    return true if mime == 'application/octet-stream'
+    return if mime == 'application/octet-stream'
 
     client.put_object({
                         bucket: ENV['S3_BUCKET'],
@@ -33,11 +34,9 @@ class CdnUploadJob < ApplicationJob
                         acl: "public-read",
                         content_type: mime
                       })
-    true
   rescue StandardError => e
     Rails.logger.error e.message
     Rails.logger.error e.backtrace
-    false
   end
 
   def client
