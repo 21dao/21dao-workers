@@ -9,5 +9,6 @@ namespace :start do
     FinalizeExchangeJob.delay(run_at: 1.minute.from_now).perform_later
     FinalizeHolaplexJob.delay(run_at: 90.seconds.from_now).perform_later
     FinalizeFormfunctionJob.delay(run_at: 2.minutes.from_now).perform_later
+    CdnUploadJob.delay(run_at: 3.minutes.from_now).perform_later
   end
 end

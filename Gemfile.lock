@@ -199,7 +199,6 @@ DEPENDENCIES
   down
   httparty
   listen (~> 3.3)
-  marcel
   pg
   puma (~> 5.0)
   rack-cors

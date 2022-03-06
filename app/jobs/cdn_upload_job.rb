@@ -9,7 +9,6 @@ class CdnUploadJob < ApplicationJob
 
   def perform
     upload_auction_images
-    upload_listing_images
     CdnUploadJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
@@ -20,16 +19,6 @@ class CdnUploadJob < ApplicationJob
 
       upload(auction.mint, auction.image)
       auction.update_attribute :cdn_uploaded, true
-    end
-  end
-
-  def upload_listing_images
-    Listing.where(cdn_uploaded: false).each do |listing|
-      next unless listing.mint && listing.image
-      next unless listing.image.start_with? 'http'
-
-      upload(listing.mint, listing.image)
-      listing.update_attribute :cdn_uploaded, true
     end
   end
 
