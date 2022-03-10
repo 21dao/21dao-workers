@@ -26,6 +26,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 gem 'rack-cors'
 
 gem 'aws-sdk-s3'
+gem 'bugsnag'
 gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'down'
@@ -45,5 +46,3 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
-
-gem "airbrake", "~> 13.0"

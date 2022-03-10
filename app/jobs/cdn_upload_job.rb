@@ -47,6 +47,8 @@ class CdnUploadJob < ApplicationJob
                         acl: "public-read",
                         content_type: file.content_type
                       })
+  rescue Down::Error => e
+    Rails.logger.error e.message
   end
 
   def client
