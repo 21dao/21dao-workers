@@ -37,12 +37,8 @@ class CdnUploadJob < ApplicationJob
     cdn_url = "#{ENV['S3_URL']}/#{filename}"
     return if remote_file_exists(cdn_url)
 
-    file = begin
-      Down.download(uri)
-    rescue Down::Error
-      nil
-    end
-    return if file.nil? || file.content_type == 'application/octet-stream'
+    file = Down.download(uri)
+    return if file.content_type == 'application/octet-stream'
 
     client.put_object({
                         bucket: ENV['S3_BUCKET'],
