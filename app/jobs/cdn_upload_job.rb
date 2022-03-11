@@ -27,8 +27,15 @@ class CdnUploadJob < ApplicationJob
     Listing.where(is_listed: true, cdn_uploaded: false).each do |listing|
       next unless listing.image.start_with? 'http'
 
-      upload(listing.mint, listing.image)
-      listing.update_attribute :cdn_uploaded, true
+      begin
+        upload(listing.mint, listing.image)
+      rescue Down::Error => e
+        Bugsnag.notify(e)
+      rescue StandardError => e
+        Bugsnag.notify(e)
+      ensure
+        next
+      end
     end
   end
 
@@ -47,8 +54,6 @@ class CdnUploadJob < ApplicationJob
                         acl: "public-read",
                         content_type: file.content_type
                       })
-  rescue Down::Error => e
-    Rails.logger.error e.message
   end
 
   def client
