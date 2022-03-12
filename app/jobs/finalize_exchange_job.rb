@@ -31,12 +31,13 @@ class FinalizeExchangeJob < ApplicationJob
     found = false
     auctions.each do |auction|
       next unless auction['keys']['mint'] == row.mint
+      next if auction['data']['end'] > Time.now.to_i
 
       row.end_time = auction['data']['end']
       row.highest_bid = auction['data']['highestBid']
       row.highest_bidder = auction['data']['highestBidder']
       row.number_bids = auction['data']['numberBids']
-      row.finalized = true
+      row.finalized = true unless
       row.save
       found = true
     end
