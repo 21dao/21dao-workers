@@ -18,16 +18,7 @@ class CdnUploadJob < ApplicationJob
       next unless auction.mint && auction.image
       next unless auction.image.start_with? 'http'
 
-      begin
-        upload(auction.mint, auction.image)
-      rescue Down::Error => e
-        Bugsnag.notify(e)
-      rescue StandardError => e
-        Bugsnag.notify(e)
-      ensure
-        next
-      end
-
+      upload(auction.mint, auction.image)
       auction.update_attribute :cdn_uploaded, true
     end
   end
@@ -36,16 +27,7 @@ class CdnUploadJob < ApplicationJob
     Listing.where(is_listed: true, cdn_uploaded: false).each do |listing|
       next unless listing.image.start_with? 'http'
 
-      begin
-        upload(listing.mint, listing.image)
-      rescue Down::Error => e
-        Bugsnag.notify(e)
-      rescue StandardError => e
-        Bugsnag.notify(e)
-      ensure
-        next
-      end
-
+      upload(listing.mint, listing.image)
       listing.update_attribute :cdn_uploaded, true
     end
   end

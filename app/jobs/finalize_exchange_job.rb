@@ -8,53 +8,29 @@ class FinalizeExchangeJob < ApplicationJob
 
   def perform
     Auction.where("end_time < #{Time.now.to_i} AND finalized = false AND source = 'exchange'").each do |row|
-      next if row['collection_name'].nil?
-
-      response = fetch_from_exchange(row['collection_name'], 0)
-      next if find_mint(response['auctions'], row)
-
-      remaining = response['count'] - 20
-      from = 20
-      while remaining.positive?
-        response = fetch_from_exchange(row['collection_name'], from)
-        remaining -= 20
-        from += 20
-        remaining = 0 if find_mint(response['auctions'], row)
-      end
+      response = fetch_from_exchange(row['mint'])
+      update_sale(response[0], row)
     end
     FinalizeExchangeJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
-  def find_mint(auctions, row)
-    return if auctions.nil?
+  def update_sale(sale, row)
+    return if sale.nil?
 
-    found = false
-    auctions.each do |auction|
-      next unless auction['keys']['mint'] == row.mint
-      next if auction['data']['end'] > Time.now.to_i
-
-      row.end_time = auction['data']['end']
-      row.highest_bid = auction['data']['highestBid']
-      row.highest_bidder = auction['data']['highestBidder']
-      row.number_bids = auction['data']['numberBids']
-      row.finalized = true unless
-      row.save
-      found = true
-    end
-    found
-  rescue StandardError => e
-    Rails.logger.error e.message
-    false
+    row.highest_bid = sale['amount']
+    row.highest_bidder = sale['to']
+    row.finalized = true
+    row.save
   end
 
-  def fetch_from_exchange(collection, from)
-    result = HTTParty.post(ENV['EXCHANGE_AUCTIONS'],
+  def fetch_from_exchange(mint)
+    result = HTTParty.post(ENV['EXCHANGE_SALES'],
                            body: {
                              from: from,
                              size: 20,
                              query: {
                                filters: {
-                                 collections: [collection]
+                                 mint: mint
                                }
                              }
                            }.to_json,
