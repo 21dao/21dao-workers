@@ -9,9 +9,11 @@ class FinalizeExchangeJob < ApplicationJob
   def perform
     Auction.where("end_time < #{Time.now.to_i} AND finalized = false AND source = 'exchange'").each do |row|
       response = fetch_from_exchange(row['mint'])
+      next if response.empty?
+
       update_sale(response[0], row)
     end
-    FinalizeExchangeJob.delay(run_at: 5.minutes.from_now).perform_later
+    # FinalizeExchangeJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
   def update_sale(sale, row)
@@ -26,8 +28,6 @@ class FinalizeExchangeJob < ApplicationJob
   def fetch_from_exchange(mint)
     result = HTTParty.post(ENV['EXCHANGE_SALES'],
                            body: {
-                             from: from,
-                             size: 20,
                              query: {
                                filters: {
                                  mint: mint
