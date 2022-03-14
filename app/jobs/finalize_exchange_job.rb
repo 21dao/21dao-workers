@@ -13,7 +13,7 @@ class FinalizeExchangeJob < ApplicationJob
 
       update_sale(response[0], row)
     end
-    # FinalizeExchangeJob.delay(run_at: 5.minutes.from_now).perform_later
+    FinalizeExchangeJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
   def update_sale(sale, row)
