@@ -16,7 +16,7 @@ class FinalizeHolaplexJob < ApplicationJob
                   LEFT JOIN metadatas
                   ON listing_metadatas.metadata_address = metadatas.address
                 SQL
-                where("metadatas.mint_address = '#{row.mint}' AND listings.ends_at IS NOT NULL AND listings.ended = true").last
+                where("metadatas.mint_address = '#{row.mint}' AND listings.ends_at IS NOT NULL").last
       next unless listing
       next unless Time.parse(listing.ends_at.to_s).to_i < Time.now.to_i
 
