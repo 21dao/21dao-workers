@@ -18,8 +18,8 @@ class CdnUploadJob < ApplicationJob
       next unless auction.mint && auction.image
       next unless auction.image.start_with? 'http'
 
-      upload(auction.mint, auction.image)
-      auction.update_attribute :cdn_uploaded, true
+      uploaded = upload(auction.mint, auction.image)
+      auction.update_attribute(:cdn_uploaded, true) if uploaded
     end
   end
 
@@ -27,8 +27,8 @@ class CdnUploadJob < ApplicationJob
     Listing.where(is_listed: true, cdn_uploaded: false).each do |listing|
       next unless listing.image.start_with? 'http'
 
-      upload(listing.mint, listing.image)
-      listing.update_attribute :cdn_uploaded, true
+      uploaded = upload(listing.mint, listing.image)
+      listing.update_attribute(:cdn_uploaded, true) if uploaded
     end
   end
 
@@ -47,6 +47,10 @@ class CdnUploadJob < ApplicationJob
                         acl: "public-read",
                         content_type: file.content_type
                       })
+    true
+  rescue StandardError => e
+    Rails.logger.error e.message
+    false
   end
 
   def client
@@ -67,5 +71,9 @@ class CdnUploadJob < ApplicationJob
     return true if response.code[0, 1] == "2" || response.code[0, 1] == "3"
 
     false
+  end
+
+  def max_attempts
+    1
   end
 end
