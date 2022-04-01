@@ -8,7 +8,11 @@ class UpdateFormfunctionJob < ApplicationJob
 
   def perform
     response = fetch_from_formfunction
-    add_to_db(response['auctions'])
+    if response['auctions'].nil?
+      Bugsnag.notify("empty response")
+    else
+      add_to_db(response['auctions'])
+    end
     UpdateFormfunctionJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
