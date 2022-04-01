@@ -42,7 +42,5 @@ class FinalizeExchangeJob < ApplicationJob
                            }.to_json,
                            headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' })
     result.parsed_response
-  rescue StandardError => e
-    Rails.logger.error e.message
   end
 end

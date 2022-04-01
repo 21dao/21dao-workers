@@ -32,8 +32,6 @@ class UpdateExchangeJob < ApplicationJob
                                    } }.to_json,
                            headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' })
     result.parsed_response
-  rescue StandardError
-    nil
   end
 
   def add_to_db(auctions)
@@ -58,8 +56,6 @@ class UpdateExchangeJob < ApplicationJob
       row.image = auction['tokenPreviewData']['image']
       row.name = auction['tokenPreviewData']['name']
       row.save
-    rescue StandardError => e
-      Rails.logger.error e.message
     end
   end
 end

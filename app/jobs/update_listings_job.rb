@@ -26,8 +26,6 @@ class UpdateListingsJob < ApplicationJob
     result = HTTParty.get(url,
                           headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' })
     result.parsed_response
-  rescue StandardError
-    nil
   end
 
   def add_to_db(tokens)
@@ -44,8 +42,6 @@ class UpdateListingsJob < ApplicationJob
       row.description = token['description']
       row.title = token['name']
       row.save
-    rescue StandardError => e
-      Rails.logger.error e.message
     end
   end
 end

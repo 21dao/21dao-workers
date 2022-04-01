@@ -16,8 +16,6 @@ class UpdateFormfunctionJob < ApplicationJob
     result = HTTParty.get(ENV['FORMFUNCTION_AUCTIONS'],
                           headers: { 'Accept' => 'application/json' })
     result.parsed_response
-  rescue StandardError
-    nil
   end
 
   def add_to_db(auctions)
@@ -34,8 +32,6 @@ class UpdateFormfunctionJob < ApplicationJob
       row.name = auction['name']
       row.highest_bidder_username = auction['highestBidderUsername']
       row.save
-    rescue StandardError => e
-      Rails.logger.error e.message
     end
   end
 end
