@@ -9,11 +9,7 @@ class FinalizeExchangeJob < ApplicationJob
   def perform
     Auction.where("end_time < #{Time.now.to_i} AND finalized = false AND source = 'exchange'").each do |row|
       response = fetch_from_exchange(row['mint'])
-      if response.empty?
-        finalize_now(row) if Time.now.to_i - row.end_time > 3600
-      else
-        update_sale(response[0], row)
-      end
+      update_sale(response[0], row)
     end
     FinalizeExchangeJob.delay(run_at: 5.minutes.from_now).perform_later
   end
