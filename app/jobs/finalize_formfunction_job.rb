@@ -27,5 +27,8 @@ class FinalizeFormfunctionJob < ApplicationJob
     result = HTTParty.get("#{ENV['FORMFUNCTION_LAST_AUCTION']}?mintAddress=#{mint}",
                           headers: { 'Accept' => 'application/json' })
     result.parsed_response
+  rescue StandardError => e
+    Bugsnag.notify e
+    nil
   end
 end

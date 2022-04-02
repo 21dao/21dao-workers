@@ -7,9 +7,14 @@ class FinalizeExchangeJob < ApplicationJob
   queue_as :exchange_art
 
   def perform
-    Auction.where("end_time < #{Time.now.to_i} AND finalized = false AND source = 'exchange'").each do |row|
-      response = fetch_from_exchange(row['mint'])
-      update_sale(response[0], row)
+    Auction.where("end_time < #{Time.now.to_i - 300} AND finalized = false AND source = 'exchange'").each do |row|
+      if row['number_bids'] == 0 && Time.now.to_i - row['end_time'] > 600
+        row.finalized = true
+        row.save
+      else
+        response = fetch_from_exchange(row['mint'])
+        update_sale(response[0], row) unless response.nil?
+      end
     end
     FinalizeExchangeJob.delay(run_at: 5.minutes.from_now).perform_later
   end
@@ -38,5 +43,8 @@ class FinalizeExchangeJob < ApplicationJob
                            }.to_json,
                            headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' })
     result.parsed_response
+  rescue StandardError => e
+    Bugsnag.notify e
+    nil
   end
 end
