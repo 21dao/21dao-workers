@@ -35,6 +35,7 @@ class UpdateFormfunctionJob < ApplicationJob
       row.image = auction['image']
       row.name = auction['name']
       row.highest_bidder_username = auction['highestBidderUsername']
+      row.secondary = auction['isSecondary']
       row.save
     end
   end

@@ -36,8 +36,8 @@ class UpdateExchangeJob < ApplicationJob
 
   def add_to_db(auctions)
     auctions.each do |auction|
-      next unless auction['tokenPreviewData']['collection']['isOneOfOne']
-      next if auction['tokenPreviewData']['collection']['isNsfw']
+      # next unless auction['tokenPreviewData']['collection']['isOneOfOne']
+      # next if auction['tokenPreviewData']['collection']['isNsfw']
 
       row = Auction.where(mint: auction['keys']['mint'], source: 'exchange').first_or_create
       row.start_time = auction['data']['start']
@@ -55,6 +55,7 @@ class UpdateExchangeJob < ApplicationJob
       row.collection_name = auction['tokenPreviewData']['collection']['name']
       row.image = auction['tokenPreviewData']['image']
       row.name = auction['tokenPreviewData']['name']
+      row.secondary = auction['tokenPreviewData']['analytics']['lastSale'].nil? ? false : true
       row.save
     end
   end

@@ -47,7 +47,8 @@ class CdnUploadJob < ApplicationJob
                         acl: "public-read",
                         content_type: file.content_type
                       })
-    true
+  rescue StandardError => e
+    Bugsnag.notify(e)
   end
 
   def client
