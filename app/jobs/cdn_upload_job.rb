@@ -10,7 +10,6 @@ class CdnUploadJob < ApplicationJob
   def perform
     upload_auction_images
     upload_listing_images
-    CdnUploadJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
   def upload_auction_images

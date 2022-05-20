@@ -16,6 +16,5 @@ class ImageFromUriJob < ApplicationJob
       auction.image = result['image']
       auction.save
     end
-    ImageFromUriJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 end

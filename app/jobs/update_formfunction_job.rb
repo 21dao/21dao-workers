@@ -13,7 +13,6 @@ class UpdateFormfunctionJob < ApplicationJob
     else
       add_to_db(response['auctions'])
     end
-    UpdateFormfunctionJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
   def fetch_from_formfunction

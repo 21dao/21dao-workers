@@ -19,7 +19,6 @@ class FinalizeFormfunctionJob < ApplicationJob
       row.finalized = true
       row.save
     end
-    FinalizeFormfunctionJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
   def fetch_from_formfunction(mint)

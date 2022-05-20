@@ -11,7 +11,6 @@ class FinalizeExchangeJob < ApplicationJob
       response = fetch_from_exchange(row['mint'])
       update_sale(response[0], row) unless response.nil?
     end
-    FinalizeExchangeJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
   def update_sale(sale, row)

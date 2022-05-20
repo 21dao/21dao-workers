@@ -21,7 +21,6 @@ class UpdateHolaplexJob < ApplicationJob
     SQL
                where("listings.created_at < '#{Time.now}' AND listings.ends_at > '#{Time.now}' AND listings.ended = false AND storefronts.subdomain NOT IN ('sedoggos', 'gatsbyclub')")
     add_to_db(listings)
-    UpdateHolaplexJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
   def add_to_db(listings)

@@ -32,6 +32,5 @@ class FinalizeHolaplexJob < ApplicationJob
       row.finalized = true
       row.save
     end
-    FinalizeHolaplexJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 end

@@ -17,7 +17,6 @@ class UpdateExchangeJob < ApplicationJob
       remaining -= 20
       from += 20
     end
-    UpdateExchangeJob.delay(run_at: 5.minutes.from_now).perform_later
   end
 
   def fetch_from_exchange(from)
