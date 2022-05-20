@@ -38,8 +38,5 @@ class FinalizeExchangeJob < ApplicationJob
                            }.to_json,
                            headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' })
     result.parsed_response
-  rescue StandardError => e
-    Bugsnag.notify e
-    nil
   end
 end

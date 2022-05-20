@@ -15,9 +15,6 @@ class ImageFromUriJob < ApplicationJob
       result = JSON.parse(data)
       auction.image = result['image']
       auction.save
-    rescue StandardError => e
-      Rails.logger.error e.message
-      Rails.logger.error e.backtrace
     end
     ImageFromUriJob.delay(run_at: 5.minutes.from_now).perform_later
   end
