@@ -32,6 +32,8 @@ gem 'delayed_job_active_record'
 gem 'down'
 gem 'graphql-client'
 gem 'httparty'
+gem 'resque'
+gem 'resque-scheduler'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
