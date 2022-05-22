@@ -1,37 +1,37 @@
 namespace :job do
   task cdn: :environment do
-    CdnUploadJob.perform_now
+    CdnUploadJob.delay(run_at: 1.seconds.from_now).perform_later
   end
 
   task finalize_exchange: :environment do
-    FinalizeExchangeJob.perform_now
+    FinalizeExchangeJob.delay(run_at: 5.seconds.from_now).perform_later
   end
 
   task finalize_formfunction: :environment do
-    FinalizeFormfunctionJob.perform_now
+    FinalizeFormfunctionJob.delay(run_at: 10.seconds.from_now).perform_later
   end
 
   task finalize_holaplex: :environment do
-    FinalizeHolaplexJob.perform_now
+    FinalizeHolaplexJob.delay(run_at: 15.seconds.from_now).perform_later
   end
 
   task uri: :environment do
-    ImageFromUriJob.perform_now
+    ImageFromUriJob.delay(run_at: 20.seconds.from_now).perform_later
   end
 
   task update_exchange: :environment do
-    UpdateExchangeJob.perform_now
+    UpdateExchangeJob.delay(run_at: 25.seconds.from_now).perform_later
   end
 
   task update_formfunction: :environment do
-    UpdateFormfunctionJob.perform_now
+    UpdateFormfunctionJob.delay(run_at: 30.seconds.from_now).perform_later
   end
 
   task update_holaplex: :environment do
-    UpdateHolaplexJob.perform_now
+    UpdateHolaplexJob.delay(run_at: 35.seconds.from_now).perform_later
   end
 
   task update_listings: :environment do
-    UpdateListingsJob.perform_now
+    UpdateListingsJob.delay(run_at: 40.seconds.from_now).perform_later
   end
 end
