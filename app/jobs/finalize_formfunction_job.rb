@@ -6,6 +6,10 @@ require 'json'
 class FinalizeFormfunctionJob < ApplicationJob
   queue_as :formfunction
 
+  def max_attempts
+    1
+  end
+
   def perform
     Auction.where("end_time < #{Time.now.to_i - 300} AND finalized = false AND source = 'formfunction'").each do |row|
       response = fetch_from_formfunction(row['mint'])

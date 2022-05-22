@@ -6,6 +6,10 @@ require 'json'
 class FinalizeExchangeJob < ApplicationJob
   queue_as :exchange_art
 
+  def max_attempts
+    1
+  end
+
   def perform
     Auction.where("end_time < #{Time.now.to_i - 300} AND finalized = false AND source = 'exchange'").each do |row|
       response = fetch_from_exchange(row['mint'])

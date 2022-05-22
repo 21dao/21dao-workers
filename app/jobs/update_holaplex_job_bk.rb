@@ -6,6 +6,10 @@ require 'json'
 class UpdateHolaplexJob < ApplicationJob
   queue_as :holaplex
 
+  def max_attempts
+    1
+  end
+
   def perform
     listings = MetaplexListing
                .select("listings.address, listings.created_at, listings.ends_at, listings.price_floor,

@@ -6,6 +6,10 @@ require 'json'
 class UpdateFormfunctionJob < ApplicationJob
   queue_as :formfunction
 
+  def max_attempts
+    1
+  end
+
   def perform
     response = fetch_from_formfunction
     if response['auctions'].nil?

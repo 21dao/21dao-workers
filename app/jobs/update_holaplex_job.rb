@@ -6,6 +6,10 @@ require 'json'
 class UpdateHolaplexJob < ApplicationJob
   queue_as :holaplex
 
+  def max_attempts
+    1
+  end
+
   def perform
     response = Holaplex::Client.query(ListingsQuery::Listings)
     listings = response.data.listings

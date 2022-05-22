@@ -6,6 +6,10 @@ require 'json'
 class FinalizeHolaplexJob < ApplicationJob
   queue_as :holaplex
 
+  def max_attempts
+    1
+  end
+
   def perform
     Auction.where("end_time < #{Time.now.to_i} AND finalized = false AND source = 'holaplex'").each do |row|
       listing = MetaplexListing

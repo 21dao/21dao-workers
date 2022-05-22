@@ -6,6 +6,10 @@ require 'json'
 class UpdateExchangeJob < ApplicationJob
   queue_as :exchange_art
 
+  def max_attempts
+    1
+  end
+
   def perform
     response = fetch_from_exchange(0)
     add_to_db(response['auctions'])

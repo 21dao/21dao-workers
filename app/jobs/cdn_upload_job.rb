@@ -7,6 +7,10 @@ require 'httparty'
 class CdnUploadJob < ApplicationJob
   queue_as :cdn_upload
 
+  def max_attempts
+    1
+  end
+
   def perform
     upload_auction_images
     upload_listing_images
