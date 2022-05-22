@@ -30,6 +30,7 @@ gem 'bugsnag'
 gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'down'
+gem 'graphql-client'
 gem 'httparty'
 
 group :development, :test do
